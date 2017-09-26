@@ -1,0 +1,11 @@
+**/.idea
+**/*.swp
+**/.tox
+**/.ropeproject
+**/*.egg-*
+**/*.pyc
+**/deployment
+
+x_archives
+dist
+

@@ -1,0 +1,137 @@
+swagger: '2.0'
+info:
+  title: Users API
+  version: "1.0.0"
+host: localhost
+# array of all schemes that your API supports
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /users:
+    get:
+      description: |
+        Returns a list of all users sorted by the descending order of date created
+      parameters:
+        - name: query
+          in: query
+          type: string
+          description: does a literal search on the fields 'email', 'fullname', 'metadata'. example - '?query=female' will pull up all records with the word 'female' in the fields 'email', 'fullname' or 'metadata'
+          required: true
+      responses:
+        200:
+          description: Client submitted valid parameters
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/userGetResponse'
+        500:
+          description: Error while executing request
+          schema:
+            $ref: '#/definitions/Error'
+        422:
+          description: Bad/invalid query string parameter
+          schema:
+            $ref: '#/definitions/Error'
+
+    post:
+      description: |
+        Create a new user
+      parameters:
+        - name: body
+          in: body
+          description: The assignement JSON you want to post
+          required: true
+          schema:
+              $ref: '#/definitions/userPostRequest'
+      responses:
+        200:
+          description: Client submitted valid parameters
+          schema:
+            $ref: '#/definitions/userGetResponse'
+        500:
+          description: Error while executing request
+          schema:
+            $ref: '#/definitions/Error'
+        400:
+          description: Bad/invalid input
+          schema:
+            $ref: '#/definitions/Error'
+
+  /health:
+    get:
+      description: |
+        Returns the health of the different modules
+      responses:
+        200:
+          description: Client submitted valid parameters
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/healthResponse'
+        500:
+          description: Error while executing request
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  userGetResponse:
+    type: object
+    properties:
+      account_key:
+        type: string
+        description: account key that was generated for this user. This field could be null if the account key hasn't been generated yet.
+      email:
+        type: string
+        description: email address of the user
+      full_name:
+        type: string
+        description: full name of the user
+      key:
+        type: string
+        description: Auto generated unique key string of this user that is used to generate the account key
+      metadata:
+        type: string
+        description: Comma separated list of meta data of the user. example values - "age 32, phd, male"
+      phone_number:
+        type: string
+        description: Phone number of the user
+
+  userPostRequest:
+    type: object
+    properties:
+      full_name:
+        type: string
+        description: full name of the user
+      phone_number:
+        type: string
+        description: Phone number of the user
+      email:
+        type: string
+        description: email address of the user
+      password:
+        type: string
+        description: Password for the user
+      metadata:
+        type: string
+        description: Comma separated list of meta data of the user. example values - "age 32, phd, male"
+
+  healthResponse:
+    properties:
+      module:
+        type: string
+        description: module for which the status information is displayed
+      status:
+        type: boolean
+        description: status of the module
+
+  Error:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+            type: string
